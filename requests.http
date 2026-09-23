@@ -1,0 +1,44 @@
+### Create news
+POST http://localhost:8080/api/news
+Content-Type: application/json
+
+{
+  "title": "Тестовая новость",
+  "content": "Текст новости для проверки",
+  "publishedDate": "2026-09-23",
+  "author": "Admin"
+}
+
+### Get all news
+GET http://localhost:8080/api/news
+
+### Get news by id
+GET http://localhost:8080/api/news/1
+
+### Update news
+PUT http://localhost:8080/api/news/1
+Content-Type: application/json
+
+{
+  "title": "Обновлённый заголовок",
+  "content": "Обновлённый текст",
+  "publishedDate": "2026-09-23",
+  "author": "Admin"
+}
+
+### Delete news
+DELETE http://localhost:8080/api/news/1
+
+### Validation error test (пустой title)
+POST http://localhost:8080/api/news
+Content-Type: application/json
+
+{
+  "title": "",
+  "content": "текст",
+  "publishedDate": "2026-09-23",
+  "author": "Admin"
+}
+
+### 404 test
+GET http://localhost:8080/api/news/9999
