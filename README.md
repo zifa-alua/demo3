@@ -1,12 +1,10 @@
-# BITLAB News API — TASK-003 (JWT-аутентификация)
+# JWT-аутентификация
 
 REST API для новостного сервиса на **Spring Boot + PostgreSQL** с полноценной
 **JWT-аутентификацией**, разграничением доступа по ролям, ротацией
 refresh-токенов и базовой защитой от brute-force.
 
 Это продолжение TASK-002 (CRUD новостей): в TASK-003 добавлен слой безопасности.
-
----
 
 ## Стек технологий
 
@@ -16,15 +14,11 @@ refresh-токенов и базовой защитой от brute-force.
 - jjwt (io.jsonwebtoken) для работы с JWT
 - Maven
 
----
-
 ## Требования для запуска
 
 - **JDK 17**
 - **Docker Desktop** (для контейнера PostgreSQL)
 - **IntelliJ IDEA** (или любая IDE / Maven)
-
----
 
 ## 1. Запуск базы данных (PostgreSQL в Docker)
 
@@ -53,7 +47,6 @@ docker run --name bitlab-postgres ^
 Проверить, что контейнер запущен: команда `docker ps` должна показать
 `bitlab-postgres`.
 
----
 
 ## 2. Переменные окружения
 
@@ -77,8 +70,6 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 > Без `JWT_SECRET` приложение **не запустится** — это сделано специально, чтобы
 > случайно не использовать пустой или слабый секрет.
 
----
-
 ## 3. Запуск приложения
 
 В IntelliJ нажми **Run** (▶️), либо из терминала:
@@ -90,8 +81,6 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 Приложение поднимется на **http://localhost:8080**. При первом запуске таблицы
 (`users`, `refresh_tokens`, `news`) создаются автоматически.
 
----
-
 ## 4. Эндпоинты API
 
 ### Auth (публичные — токен не нужен)
@@ -102,6 +91,7 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 | POST  | `/auth/login`    | `email`, `password`           | 200 → `accessToken`, `refreshToken` |
 | POST  | `/auth/refresh`  | `refreshToken`                | 200 → новая пара токенов |
 | POST  | `/auth/logout`   | `refreshToken`                | 200 (токен отзывается) |
+
 
 ### News (защищённые — нужен Bearer-токен)
 
@@ -117,8 +107,6 @@ Access-токен передаётся в заголовке:
 ```
 Authorization: Bearer <accessToken>
 ```
-
----
 
 ## 5. Роли
 
@@ -136,7 +124,6 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 
 После этого нужно заново залогиниться, чтобы получить токен с новой ролью.
 
----
 
 ## 6. Тестирование
 
@@ -158,7 +145,14 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 Access-токен живёт **15 минут**, refresh-токен — **7 дней**, он одноразовый
 (ротируется при каждом refresh, отзывается при logout).
 
----
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/3001729d-4bf4-4d8e-aa4f-d523c2e672e4" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/6a7bc382-427c-4f95-8cf4-7d405bb1339c" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/839873f0-20d0-4d11-8bba-2649dfd6b5cc" />
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/fc4ac382-1943-406c-b6ca-853b78414053" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/b2eb1505-90cd-42ab-8d39-8a8f4801cbe3" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/f8b1c861-4411-43c0-b928-40bb5b4c1bee" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/12152b77-e494-4cc4-aece-fe4204af9a67" />
+
 
 ## 7. Реализованные меры безопасности
 
@@ -177,7 +171,6 @@ Access-токен живёт **15 минут**, refresh-токен — **7 дн�
 - При регистрации принудительно ставится роль **STUDENT** — защита от повышения
   привилегий.
 
----
 
 ## Структура проекта
 
