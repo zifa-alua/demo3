@@ -92,6 +92,7 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 | POST  | `/auth/refresh`  | `refreshToken`                | 200 → новая пара токенов |
 | POST  | `/auth/logout`   | `refreshToken`                | 200 (токен отзывается) |
 
+
 ### News (защищённые — нужен Bearer-токен)
 
 | Метод  | Эндпоинт         | Кто может вызвать    | Успех |
@@ -143,6 +144,14 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 
 Access-токен живёт **15 минут**, refresh-токен — **7 дней**, он одноразовый
 (ротируется при каждом refresh, отзывается при logout).
+
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/3001729d-4bf4-4d8e-aa4f-d523c2e672e4" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/6a7bc382-427c-4f95-8cf4-7d405bb1339c" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/839873f0-20d0-4d11-8bba-2649dfd6b5cc" />
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/fc4ac382-1943-406c-b6ca-853b78414053" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/b2eb1505-90cd-42ab-8d39-8a8f4801cbe3" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/f8b1c861-4411-43c0-b928-40bb5b4c1bee" />
+<img width="974" height="518" alt="image" src="https://github.com/user-attachments/assets/12152b77-e494-4cc4-aece-fe4204af9a67" />
 
 
 ## 7. Реализованные меры безопасности
