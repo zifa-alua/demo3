@@ -1,43 +1,43 @@
-# BITLAB News API — TASK-003 (JWT Authentication)
+# BITLAB News API — TASK-003 (JWT-аутентификация)
 
-Backend REST API for a news service, built on **Spring Boot + PostgreSQL** with
-full **JWT authentication**, role-based access control, refresh-token rotation
-and basic brute-force protection.
+REST API для новостного сервиса на **Spring Boot + PostgreSQL** с полноценной
+**JWT-аутентификацией**, разграничением доступа по ролям, ротацией
+refresh-токенов и базовой защитой от brute-force.
 
-This is a continuation of TASK-002 (news CRUD): TASK-003 adds the security layer.
+Это продолжение TASK-002 (CRUD новостей): в TASK-003 добавлен слой безопасности.
 
 ---
 
-## Tech stack
+## Стек технологий
 
 - Java 17
 - Spring Boot 4 (Spring Web, Spring Security 6, Spring Data JPA, Validation)
-- PostgreSQL 16 (in Docker)
-- jjwt (io.jsonwebtoken) for JWT
+- PostgreSQL 16 (в Docker)
+- jjwt (io.jsonwebtoken) для работы с JWT
 - Maven
 
 ---
 
-## Prerequisites
+## Требования для запуска
 
 - **JDK 17**
-- **Docker Desktop** (for the PostgreSQL container)
-- **IntelliJ IDEA** (or any IDE / Maven)
+- **Docker Desktop** (для контейнера PostgreSQL)
+- **IntelliJ IDEA** (или любая IDE / Maven)
 
 ---
 
-## 1. Start the database (PostgreSQL in Docker)
+## 1. Запуск базы данных (PostgreSQL в Docker)
 
-The app expects PostgreSQL on **port 5433**, database **`bitlab_news`**.
+Приложение ожидает PostgreSQL на **порту 5433**, база **`bitlab_news`**.
 
-**Option A — docker-compose (recommended).** A `docker-compose.yml` is included
-in the project root. From the project folder run:
+**Вариант А — docker-compose (рекомендуется).** В корне проекта лежит файл
+`docker-compose.yml`. Из папки проекта выполни:
 
 ```bash
 docker compose up -d
 ```
 
-**Option B — plain docker run:**
+**Вариант Б — обычный docker run:**
 
 ```bash
 docker run --name bitlab-postgres ^
@@ -48,70 +48,71 @@ docker run --name bitlab-postgres ^
   -d postgres:16
 ```
 
-> On macOS/Linux replace the `^` line-continuations with `\`.
+> На macOS/Linux замени переносы строк `^` на `\`.
 
-Check it is running: `docker ps` should list `bitlab-postgres`.
+Проверить, что контейнер запущен: команда `docker ps` должна показать
+`bitlab-postgres`.
 
 ---
 
-## 2. Environment variables
+## 2. Переменные окружения
 
-Secrets are **never** stored in the code or in `application.yml` — they are read
-from environment variables. Set these before running the app
-(in IntelliJ: **Run → Edit Configurations → Environment variables**):
+Секреты **никогда** не хранятся в коде или в `application.yml` — они читаются из
+переменных окружения. Задай их перед запуском приложения
+(в IntelliJ: **Run → Edit Configurations → Environment variables**):
 
-| Variable      | Example value                                   | Description                          |
-|---------------|-------------------------------------------------|--------------------------------------|
-| `DB_URL`      | `jdbc:postgresql://localhost:5433/bitlab_news`  | JDBC URL to the database             |
-| `DB_USER`     | `news_user`                                     | Database user                        |
-| `DB_PASSWORD` | `localpass123`                                  | Database password                    |
-| `JWT_SECRET`  | *(64-byte Base64 string — generate your own)*   | Secret key used to sign JWT tokens   |
+| Переменная    | Пример значения                                 | Описание                              |
+|---------------|-------------------------------------------------|---------------------------------------|
+| `DB_URL`      | `jdbc:postgresql://localhost:5433/bitlab_news`  | JDBC-адрес базы данных                |
+| `DB_USER`     | `news_user`                                     | Пользователь базы                     |
+| `DB_PASSWORD` | `localpass123`                                  | Пароль базы                           |
+| `JWT_SECRET`  | *(строка Base64 из 64 байт — сгенерируй свою)*  | Секретный ключ для подписи JWT-токенов |
 
-**Generate a JWT secret** (PowerShell):
+**Сгенерировать JWT-секрет** (PowerShell):
 
 ```powershell
 $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
 ```
 
-> The app **will not start** without `JWT_SECRET` — this is intentional, so a
-> weak or empty secret can never be used by accident.
+> Без `JWT_SECRET` приложение **не запустится** — это сделано специально, чтобы
+> случайно не использовать пустой или слабый секрет.
 
 ---
 
-## 3. Run the application
+## 3. Запуск приложения
 
-In IntelliJ press **Run** (▶️), or from the terminal:
+В IntelliJ нажми **Run** (▶️), либо из терминала:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-The app starts on **http://localhost:8080**. On the first run the tables
-(`users`, `refresh_tokens`, `news`) are created automatically.
+Приложение поднимется на **http://localhost:8080**. При первом запуске таблицы
+(`users`, `refresh_tokens`, `news`) создаются автоматически.
 
 ---
 
-## 4. API endpoints
+## 4. Эндпоинты API
 
-### Auth (public — no token required)
+### Auth (публичные — токен не нужен)
 
-| Method | Endpoint         | Body                          | Success |
-|--------|------------------|-------------------------------|---------|
-| POST   | `/auth/register` | `email`, `password`           | 201     |
-| POST   | `/auth/login`    | `email`, `password`           | 200 → `accessToken`, `refreshToken` |
-| POST   | `/auth/refresh`  | `refreshToken`                | 200 → new token pair |
-| POST   | `/auth/logout`   | `refreshToken`                | 200 (token revoked) |
+| Метод | Эндпоинт         | Тело запроса                  | Успех |
+|-------|------------------|-------------------------------|-------|
+| POST  | `/auth/register` | `email`, `password`           | 201   |
+| POST  | `/auth/login`    | `email`, `password`           | 200 → `accessToken`, `refreshToken` |
+| POST  | `/auth/refresh`  | `refreshToken`                | 200 → новая пара токенов |
+| POST  | `/auth/logout`   | `refreshToken`                | 200 (токен отзывается) |
 
-### News (protected — Bearer token required)
+### News (защищённые — нужен Bearer-токен)
 
-| Method | Endpoint      | Who can call   | Success |
-|--------|---------------|----------------|---------|
-| GET    | `/api/news`   | any logged-in user | 200 |
-| POST   | `/api/news`   | **ADMIN only** | 201 |
-| PUT    | `/api/news/{id}` | **ADMIN only** | 200 |
-| DELETE | `/api/news/{id}` | **ADMIN only** | 200/204 |
+| Метод  | Эндпоинт         | Кто может вызвать    | Успех |
+|--------|------------------|----------------------|-------|
+| GET    | `/api/news`      | любой авторизованный | 200   |
+| POST   | `/api/news`      | **только ADMIN**     | 201   |
+| PUT    | `/api/news/{id}` | **только ADMIN**     | 200   |
+| DELETE | `/api/news/{id}` | **только ADMIN**     | 200/204 |
 
-Send the access token in the header:
+Access-токен передаётся в заголовке:
 
 ```
 Authorization: Bearer <accessToken>
@@ -119,73 +120,74 @@ Authorization: Bearer <accessToken>
 
 ---
 
-## 5. Roles
+## 5. Роли
 
-- **STUDENT** — default role for every newly registered user. Can only read news (GET).
-- **ADMIN** — can create/update/delete news.
+- **STUDENT** — роль по умолчанию для каждого нового пользователя. Может только
+  читать новости (GET).
+- **ADMIN** — может создавать / изменять / удалять новости.
 
-Registration always assigns **STUDENT** (the client cannot choose its own role —
-this prevents privilege escalation). To grant ADMIN, update the database
-directly:
+При регистрации всегда назначается роль **STUDENT** (клиент не может выбрать роль
+сам — это защита от повышения привилегий). Чтобы выдать ADMIN, обнови роль прямо
+в базе:
 
 ```sql
 UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 ```
 
-Then log in again to receive a token carrying the new role.
+После этого нужно заново залогиниться, чтобы получить токен с новой ролью.
 
 ---
 
-## 6. Testing
+## 6. Тестирование
 
-A ready-to-run request collection is in **`requests.http`** (open it in IntelliJ
-and click the green arrow next to each request). Recommended order and expected
-status codes:
+Готовый набор запросов лежит в файле **`requests.http`** (открой его в IntelliJ и
+жми зелёную стрелку у каждого запроса). Рекомендуемый порядок и ожидаемые коды:
 
-| # | Request                         | Condition                       | Expected |
-|---|---------------------------------|---------------------------------|----------|
-| 1 | POST `/auth/register`           | new email                       | 201 (409 if already exists) |
-| 2 | POST `/auth/login`              | correct password                | 200      |
-| 3 | GET `/api/news`                 | valid access token              | 200      |
-| 4 | GET `/api/news`                 | no token                        | 401      |
-| 5 | POST `/api/news`                | STUDENT token                   | 403      |
-| 5'| POST `/api/news`                | ADMIN token, all fields         | 201      |
-| 6 | POST `/auth/refresh`            | valid refresh token             | 200      |
-| 7 | POST `/auth/logout`             | refresh token                   | 200      |
-| 8 | POST `/auth/refresh`            | revoked refresh token           | 401      |
+| № | Запрос                          | Условие                         | Ожидается |
+|---|---------------------------------|---------------------------------|-----------|
+| 1 | POST `/auth/register`           | новый email                     | 201 (409, если уже есть) |
+| 2 | POST `/auth/login`              | верный пароль                   | 200       |
+| 3 | GET `/api/news`                 | с валидным access-токеном       | 200       |
+| 4 | GET `/api/news`                 | без токена                      | 401       |
+| 5 | POST `/api/news`                | токен STUDENT                   | 403       |
+| 5'| POST `/api/news`                | токен ADMIN, все поля           | 201       |
+| 6 | POST `/auth/refresh`            | валидный refresh-токен          | 200       |
+| 7 | POST `/auth/logout`             | refresh-токен                   | 200       |
+| 8 | POST `/auth/refresh`            | отозванный refresh-токен        | 401       |
 
-Access tokens expire after **15 minutes**; refresh tokens after **7 days** and
-are single-use (rotated on every refresh, revoked on logout).
-
----
-
-## 7. Security measures implemented
-
-- **Passwords** are stored only as **BCrypt** hashes — never plain text.
-- **JWT secret** is provided only via the `JWT_SECRET` environment variable,
-  never committed to the repository.
-- **Algorithm `none` is rejected** — tokens are verified with an explicit HS256
-  signing key; an unsigned token fails verification and returns 401.
-- **Refresh tokens** are stored in the database as **SHA-256 hashes**, not in
-  plain form; they are rotated on refresh and revoked on logout.
-- **Role from the database**, not from the token payload — the role claim is
-  never trusted blindly.
-- **Brute-force protection** — login is rate-limited (5 attempts per minute per
-  client), returning **429** when exceeded.
-- **Invalid / missing token → 401** (without leaking why); **wrong role → 403**.
-- Registration forces the **STUDENT** role to prevent privilege escalation.
+Access-токен живёт **15 минут**, refresh-токен — **7 дней**, он одноразовый
+(ротируется при каждом refresh, отзывается при logout).
 
 ---
 
-## Project structure
+## 7. Реализованные меры безопасности
+
+- **Пароли** хранятся только в виде **BCrypt**-хеша — никакого plain-text.
+- **JWT-секрет** задаётся только через переменную окружения `JWT_SECRET`, в
+  репозиторий не попадает.
+- **Алгоритм `none` отклоняется** — токены проверяются явным ключом подписи HS256;
+  токен без подписи не проходит проверку и получает 401.
+- **Refresh-токены** хранятся в базе в виде **SHA-256**-хешей, а не в открытом
+  виде; ротируются при refresh и отзываются при logout.
+- **Роль берётся из базы**, а не из payload токена — claim `role` не принимается
+  на веру.
+- **Защита от brute-force** — вход ограничен по частоте (5 попыток в минуту с
+  одного клиента), при превышении возвращается **429**.
+- **Невалидный / отсутствующий токен → 401** (без деталей); **чужая роль → 403**.
+- При регистрации принудительно ставится роль **STUDENT** — защита от повышения
+  привилегий.
+
+---
+
+## Структура проекта
 
 ```
 src/main/java/com/example/demo/
 ├── controller/      # AuthController, NewsController
-├── dto/             # request/response DTOs
+├── dto/             # DTO запросов и ответов
 ├── entity/          # User, Role, RefreshToken, News
-├── exception/       # custom exceptions + GlobalExceptionHandler
-├── repository/      # Spring Data JPA repositories
+├── exception/       # кастомные исключения + GlobalExceptionHandler
+├── repository/      # репозитории Spring Data JPA
 ├── security/        # JwtUtil, JwtAuthenticationFilter, SecurityConfig,
 │                    # PasswordConfig, TokenHashUtil, LoginRateLimiter,
 │                    # RestAuthEntryPoint
