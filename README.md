@@ -1,4 +1,4 @@
-# News CRUD Service — TASK-002
+# News CRUD Service
 
 Локальный backend-сервис на Spring Boot для управления новостями (CRUD).
 
