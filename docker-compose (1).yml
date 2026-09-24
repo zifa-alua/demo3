@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: bitlab-postgres
+    environment:
+      POSTGRES_USER: news_user
+      POSTGRES_PASSWORD: localpass123
+      POSTGRES_DB: bitlab_news
+    ports:
+      - "5433:5432"
+    volumes:
+      - bitlab_pgdata:/var/lib/postgresql/data
+
+volumes:
+  bitlab_pgdata:
