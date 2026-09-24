@@ -42,3 +42,53 @@ Content-Type: application/json
 
 ### 404 test
 GET http://localhost:8080/api/news/9999
+
+### 1. Регистрация
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{ "email": "student@test.kz", "password": "Password123" }
+
+### 2. Логин
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{ "email": "student@test.kz", "password": "Password123" }
+
+### 3. Чтение новостей с токеном
+GET http://localhost:8080/api/news
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHRlc3Qua3oiLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc5MDI2MzA5MywiZXhwIjoxNzkwMjYzOTkzfQ._xPjU2C-4jPOcwq8Af316EOgwGweGomsnlfqnafqkHs
+
+### 4. Чтение БЕЗ токена
+GET http://localhost:8080/api/news
+
+### 5. Создание новости под STUDENT
+POST http://localhost:8080/api/news
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHRlc3Qua3oiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTAyNjQxNDgsImV4cCI6MTc5MDI2NTA0OH0.GvXbxAf4Q3HxAtSzNq9aYzfwraEIBCOctEpx0nldZ4w
+Content-Type: application/json
+
+{
+  "title": "Test",
+  "content": "текст новости",
+  "author": "Zifa-Alua",
+  "publishedDate": "2026-09-24"
+}
+
+
+### 6. Refresh
+POST http://localhost:8080/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "a7b43e81-679c-4b37-ba17-2f6be7410c96b777d15d-ae78-4238-81d5-38d913581279" }
+
+### 7. Logout
+POST http://localhost:8080/auth/logout
+Content-Type: application/json
+
+{ "refreshToken": "a7b43e81-679c-4b37-ba17-2f6be7410c96b777d15d-ae78-4238-81d5-38d913581279" }
+
+### 8. Refresh
+POST http://localhost:8080/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "a7b43e81-679c-4b37-ba17-2f6be7410c96b777d15d-ae78-4238-81d5-38d913581279" }

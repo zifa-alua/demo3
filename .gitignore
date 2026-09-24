@@ -35,3 +35,23 @@ build/
 ### Наши правила ###
 .env
 *.log
+
+# Сборка
+target/
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Секреты и локальные настройки
+.env
+*.env
+
+# Логи
+*.log
+
+# ОС
+.DS_Store
+Thumbs.db
