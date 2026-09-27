@@ -1,4 +1,4 @@
-# BITLAB News API — авторизация и роли (TASK-005)
+# BITLAB News API — авторизация и роли
 
 REST API новостного сервиса на **Spring Boot + PostgreSQL** с полноценной
 **JWT-аутентификацией**, разграничением доступа по ролям (Spring Security),
