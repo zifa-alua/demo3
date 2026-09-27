@@ -10,7 +10,6 @@ REST API новостного сервиса на **Spring Boot + PostgreSQL** �
 - **TASK-005** — роли через `@PreAuthorize`, эндпоинт профиля `/api/users/me`,
   корректные коды 401/403
 
----
 
 ## Стек технологий
 
@@ -20,7 +19,6 @@ REST API новостного сервиса на **Spring Boot + PostgreSQL** �
 - jjwt (io.jsonwebtoken) для работы с JWT
 - Maven
 
----
 
 ## Требования для запуска
 
@@ -28,7 +26,6 @@ REST API новостного сервиса на **Spring Boot + PostgreSQL** �
 - **Docker Desktop** (для контейнера PostgreSQL)
 - **IntelliJ IDEA** (или любая IDE / Maven)
 
----
 
 ## 1. Запуск базы данных (PostgreSQL в Docker)
 
@@ -54,7 +51,6 @@ docker run --name bitlab-postgres ^
 
 > На macOS/Linux замени переносы строк `^` на `\`.
 
----
 
 ## 2. Переменные окружения
 
@@ -76,14 +72,12 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 
 > Без `JWT_SECRET` приложение не запустится — это защита от пустого/слабого секрета.
 
----
 
 ## 3. Запуск приложения
 
 В IntelliJ нажми **Run** (▶️), либо `./mvnw spring-boot:run`.
 Приложение поднимется на **http://localhost:8080**. Таблицы создаются автоматически.
 
----
 
 ## 4. Как получить токен
 
@@ -100,7 +94,6 @@ $b = New-Object byte[] 64; [System.Security.Cryptography.RandomNumberGenerator]:
 4. Access-токен живёт **15 минут**. Когда истечёт — обнови его через
    `POST /auth/refresh` с телом `{ "refreshToken": "..." }` (refresh живёт 7 дней).
 
----
 
 ## 5. Роли и права
 
@@ -119,7 +112,6 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 Разграничение реализовано двумя уровнями: правилами в `SecurityConfig` и
 аннотациями `@PreAuthorize("hasRole('ADMIN')")` на методах контроллера.
 
----
 
 ## 6. Эндпоинты API
 
@@ -143,14 +135,12 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'someone@test.kz';
 | DELETE | `/api/news/{id}` | только ADMIN         |
 | GET    | `/api/users/me`  | любой авторизованный (свой профиль из токена) |
 
----
 
 ## 7. Коды ответов авторизации
 
 - **401 Unauthorized** — токена нет, он невалиден или истёк.
 - **403 Forbidden** — токен валиден, но роли не хватает (например, STUDENT пытается создать новость).
 
----
 
 ## 8. Меры безопасности
 
