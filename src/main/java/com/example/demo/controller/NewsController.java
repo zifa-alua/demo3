@@ -7,7 +7,7 @@ import com.example.demo.service.NewsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 @RestController
@@ -20,6 +20,7 @@ public class NewsController {
         this.newsService = newsService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<NewsResponseDto> create(@Valid @RequestBody NewsRequestDto dto) {
         NewsResponseDto created = newsService.create(dto);
@@ -30,17 +31,18 @@ public class NewsController {
     public ResponseEntity<List<NewsResponseDto>> getAll() {
         return ResponseEntity.ok(newsService.getAll());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<NewsResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(newsService.getById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<NewsResponseDto> update(@PathVariable Long id, @Valid @RequestBody NewsRequestDto dto) {
         return ResponseEntity.ok(newsService.update(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         newsService.delete(id);

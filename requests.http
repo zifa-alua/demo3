@@ -47,13 +47,13 @@ GET http://localhost:8080/api/news/9999
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
-{ "email": "student@test.kz", "password": "Password123" }
+{ "email": "student4@test.kz", "password": "Password123" }
 
 ### 2. Логин
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
-{ "email": "student@test.kz", "password": "Password123" }
+{ "email": "student4@test.kz", "password": "Password123" }
 
 ### 3. Чтение новостей с токеном
 GET http://localhost:8080/api/news
@@ -61,10 +61,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHRlc3Qua3oiLCJyb
 
 ### 4. Чтение БЕЗ токена
 GET http://localhost:8080/api/news
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50NEB0ZXN0Lmt6Iiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3OTAzOTc5ODAsImV4cCI6MTc5MDM5ODg4MH0.rroeozgrOancrqJ2FBGomu6-HxJWJOTlSCNwsbAhyS4
 
 ### 5. Создание новости под STUDENT
 POST http://localhost:8080/api/news
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHRlc3Qua3oiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTAyNjQxNDgsImV4cCI6MTc5MDI2NTA0OH0.GvXbxAf4Q3HxAtSzNq9aYzfwraEIBCOctEpx0nldZ4w
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50NEB0ZXN0Lmt6Iiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3OTAzOTc5ODAsImV4cCI6MTc5MDM5ODg4MH0.rroeozgrOancrqJ2FBGomu6-HxJWJOTlSCNwsbAhyS4
 Content-Type: application/json
 
 {
@@ -92,3 +93,7 @@ POST http://localhost:8080/auth/refresh
 Content-Type: application/json
 
 { "refreshToken": "a7b43e81-679c-4b37-ba17-2f6be7410c96b777d15d-ae78-4238-81d5-38d913581279" }
+
+### Профиль текущего пользователя
+GET http://localhost:8080/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHRlc3Qua3oiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3OTAzOTM3MTYsImV4cCI6MTc5MDM5NDYxNn0.0TIU2zvfibZ-UPkcllZJSXAzdWJmmcdzE9jSm2JE1w0
